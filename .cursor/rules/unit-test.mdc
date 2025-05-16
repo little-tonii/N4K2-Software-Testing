@@ -1,0 +1,176 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Unit Testing Rules
+
+## 1. Overall Test Requirements
+
+### 1.1 Check all related context
+
+- Before write each test method, make sure to read it's original code first (Especially entity model that method/class using)
+- Check correct return type of functions, variables to make sure test correctly
+- DO NOT CHANGE ORIGINAL CODE
+- There should be pass and fail testcases, not errors
+
+### 1.1 Test Class Structure
+- Each test class must be in the corresponding test package matching the source package
+- Test class name must end with "Test" (e.g., UserServiceTest)
+- Test methods name should be concise, clear
+- Test methods must be associated with source code
+- Test methods must be annotated with @Test
+- Test methods must have clear, descriptive names using @DisplayName
+- Test methods must tested with real database for CRUD operation
+
+### 1.2 Test Method Documentation
+Each test method must include:
+```java
+/**
+ * Test Case ID: [Module]_[Number]
+ * Purpose: [Clear description of what is being tested]
+ * 
+ * Prerequisites:
+ * - [List of required conditions]
+ * 
+ * Test Steps:
+ * 1. [Step 1]
+ * 2. [Step 2]
+ * 
+ * Expected Results:
+ * - [Expected outcome 1]
+ * - [Expected outcome 2]
+ */
+```
+
+## 2. Test Case ID Standards
+
+### 2.1 Module Codes
+- AM: Account Management
+- CM: Course Management
+- QBM: Question Bank Management
+- EM: Exam Management
+- SM: Statistics Management
+
+### 2.2 Test Case ID Format
+```
+UT_[Module Code]_[Test Number]
+Example: UT_AM_01, UT_CM_02, UT_QBM_03
+```
+
+### 2.3 Test Case Categories
+
+#### Account Management (AM)
+- UT_AM_01: Login
+- UT_AM_02: Password Recovery
+- UT_AM_03: Account List Management (Admin)
+- UT_AM_04: Information Update
+
+#### Course Management (CM)
+- UT_CM_01: Create subject (Admin)
+- UT_CM_02: Update subject (Admin)
+- UT_CM_03: Part Management (Admin)
+- UT_CM_04: View subject list (Admin)
+
+#### Question Bank Management (QBM)
+- UT_QBM_01: Question List and Filtering
+- UT_QBM_02: Question Addition
+- UT_QBM_03: View Question Detail
+
+#### Exam Management (EM)
+- UT_EM_01: Exam List
+- UT_EM_02: Exam Creation
+- UT_EM_03: Exam Taking
+- UT_EM_04: Result Viewing
+
+#### Statistics Management (SM)
+- UT_SM_01: Statistics Viewing
+
+## 3. Service Layer Testing Rules
+
+### 3.1 Service Method Tests
+- Test all public methods
+- Test data should be test with real database
+- Test method parameters validation
+- Test return values
+- Test exception handling
+
+### 3.2 Service Integration Tests
+- Test data should be test with real database
+- Test service interactions with repositories
+- Test service interactions with other services
+- Test transaction management
+- Test caching behavior if applicable
+
+## 4. Controller Layer Testing Rules
+
+- Test data should be test with real database
+
+### 4.1 Endpoint Tests
+- Test all HTTP methods (GET, POST, PUT, DELETE)
+- Test request parameter validation
+- Test response status codes
+- Test response body structure
+
+### 4.2 Security Tests
+- Test authentication requirements
+- Test authorization rules
+- Test input validation
+- Test error handling
+
+## 5. Repository Layer Testing Rules
+
+### 5.1 Query Tests
+- Test all custom queries
+- Test pagination
+- Test sorting
+- Test filtering
+
+### 5.2 CRUD Tests
+- Test create operations
+- Test read operations
+- Test update operations
+- Test delete operations
+
+## 6. Mocking Rules
+
+### 6.1 Mock Setup
+- Mock all external dependencies
+- Use @Mock for dependencies
+- Use @InjectMocks for the class under test
+- Use @Spy for partial mocking
+
+### 6.2 Mock Verification
+- Verify all mock interactions
+- Use appropriate verification modes
+- Verify mock method calls
+- Verify mock method parameters
+
+## 7. Assertion Rules
+
+### 7.1 Basic Assertions
+- Use specific assertions over generic ones
+- Use descriptive assertion messages
+- Use appropriate assertion methods
+- Use assertion groups for related checks
+
+### 7.2 Collection Assertions
+- Test collection size
+- Test collection contents
+- Test collection order if relevant
+- Test collection uniqueness if required
+
+## 8. Error Handling Tests
+
+### 8.1 Exception Tests
+- Test expected exceptions
+- Test exception messages
+- Test exception types
+- Test exception handling
+
+### 8.2 Edge Cases
+- Test null inputs
+- Test empty inputs
+- Test boundary values
+
+- Test invalid inputs
