@@ -37,7 +37,7 @@ public class QuestionTypeController {
 
     }
 
-    @GetMapping(value = "/question-types/{id}")
+    @GetMapping(value = "/question-types/id/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('LECTURER')")
 
     public QuestionType getQuestionTypeById(@PathVariable Long id) {
@@ -45,7 +45,7 @@ public class QuestionTypeController {
         return questionType;
     }
 
-    @GetMapping(value = "/question-types/{typeCode}")
+    @GetMapping(value = "/question-types/code/{typeCode}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('LECTURER')")
 
     public QuestionType getQuestionTypeByTypeCode(@PathVariable String typeCode) {

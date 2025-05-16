@@ -13,6 +13,7 @@ alwaysApply: false
 - Check correct return type of functions, variables to make sure test correctly
 - DO NOT CHANGE ORIGINAL CODE
 - There should be pass and fail testcases, not errors
+- All exception throws like null, MalformedJwt, ... will make the test as fail.
 
 ### 1.1 Test Class Structure
 - Each test class must be in the corresponding test package matching the source package

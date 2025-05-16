@@ -1,0 +1,70 @@
+# Test Results Statistics Summary,,,,,,,,
+Total Test Cases,153,,,,,,,
+Total Passed,127,,,,,,,
+Total Failed,15,,,,,,,
+Total Errors,11,,,,,,,
+Pass Rate,83.01%,,,,,,,
+Fail Rate,9.80%,,,,,,,
+Error Rate,7.19%,,,,,,,
+,,,,,,,,
+# Module-wise Statistics,,,,,,,,
+Module,Total Tests,Passed,Failed,Errors,Pass Rate,,,,,
+AM,13,13,0,0,100.00%,,,,,
+CM,20,20,0,0,100.00%,,,,,
+EM,27,17,10,0,62.96%,,,,,
+QBM,57,57,0,0,100.00%,,,,,
+SM,36,31,5,0,86.11%,,,,,
+,,,,,,,,
+# Test Results Details,,,,,,,,
+Module,Test File,Test Case ID,Test Method,Goal Description,Status,Input,Expected Output,Reason for Failure
+AM,UserServiceTest.java,UT_AM_18,testCreateUserWithValidData,Verify that createUser successfully creates a new user with valid input data,Passed,"{""username"": ""new_user"", ""email"": ""new@example.com"", ""password"": ""password123"", ""role"": ""USER""}","{""id"": 1, ""username"": ""new_user"", ""email"": ""new@example.com"", ""role"": ""USER""}",-
+AM,UserServiceTest.java,UT_AM_19,testGetUserByUsername,Verify that getUserByUsername returns the correct user when a valid username is provided,Passed,"{""username"": ""test_user""}","{""id"": 1, ""username"": ""test_user"", ""email"": ""test@example.com"", ""role"": ""USER""}",-
+AM,UserServiceTest.java,UT_AM_20,testExistsByUsername,Verify that existsByUsername returns true for existing username,Passed,"{""username"": ""test_user""}","{""exists"": true}",-
+AM,UserServiceTest.java,UT_AM_21,testExistsByEmail,Verify that existsByEmail returns true for existing email,Passed,"{""email"": ""test@example.com""}","{""exists"": true}",-
+AM,UserServiceTest.java,UT_AM_22,testFindUsersByPage,Verify that findUsersByPage returns correct paginated results,Passed,"{""page"": 0, ""size"": 10}","{""users"": [], ""total"": 0}",-
+AM,AuthenticationControllerTest.java,UT_AM_33,testAuthenticateUserSuccess,Verify that valid credentials return a JWT token for authentication,Passed,"{""username"": ""test_user"", ""password"": ""password123""}","{""token"": ""eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."", ""type"": ""Bearer""}",-
+AM,AuthenticationControllerTest.java,UT_AM_34,testAuthenticateUserNotFound,Verify that invalid credentials return appropriate error response,Passed,"{""username"": ""test_user"", ""password"": ""wrong_password""}","{""status"": 401, ""message"": ""Invalid username or password""}",-
+AM,AuthenticationControllerTest.java,UT_AM_35,testAuthenticateUserDeleted,Verify that deleted user cannot authenticate,Passed,"{""username"": ""deleted_user"", ""password"": ""password123""}","{""status"": 400, ""message"": ""User is deleted""}",-
+CM,CourseServiceTest.java,UT_CM_01,testGetAllCourses,Verify that getAllCourses returns an empty list when no courses exist,Passed,None,"{""courses"": [], ""total"": 0}",-
+CM,CourseServiceTest.java,UT_CM_02,testGetCourseById,Verify that getCourseById returns the correct course when a valid course ID is provided,Passed,"{""courseId"": 1}","{""id"": 1, ""name"": ""Test Course"", ""description"": ""Test Description"", ""duration"": 60}",-
+CM,CourseServiceTest.java,UT_CM_03,testCreateCourse,Verify that createCourse successfully creates a new course with valid input data,Passed,"{""name"": ""New Course"", ""description"": ""New Description"", ""duration"": 90}","{""id"": 1, ""name"": ""New Course"", ""description"": ""New Description"", ""duration"": 90}",-
+EM,ExamServiceTest.java,UT_EM_01,testGetAllExams,Verify that getAllExams returns an empty list when no exams exist,Passed,None,"{""exams"": [], ""total"": 0}",-
+EM,ExamServiceTest.java,UT_EM_02,testGetExamById,Verify that getExamById returns the correct exam when a valid exam ID is provided,Passed,"{""examId"": 1}","{""id"": 1, ""title"": ""Test Exam"", ""duration"": 120, ""totalPoints"": 100}",-
+EM,ExamServiceTest.java,UT_EM_03,testCancelExam,Verify that cancelExam successfully cancels an existing exam,Failed,"{""examId"": 1}","{""success"": true, ""message"": ""Exam cancelled successfully""}",Exam cancellation operation returned false when it should have returned true
+EM,ExamServiceTest.java,UT_EM_12,testGetChoiceListWithNullExamQuestionPoints,Verify that the system properly handles null exam question points by throwing NullPointerException,Failed,"{""examQuestionPoints"": null}","{""error"": ""NullPointerException"", ""message"": ""Exam question points cannot be null""}",The system did not throw a NullPointerException when handling null exam question points as expected
+QBM,QuestionServiceImplTest.java,UT_QBM_01_001,testGetAllQuestions,Verify that getAllQuestions returns an empty list when no questions exist,Passed,None,"{""questions"": [], ""total"": 0}",-
+QBM,QuestionServiceImplTest.java,UT_QBM_03_001,testGetQuestionById,Verify that getQuestionById returns the correct question when a valid question ID is provided,Passed,"{""questionId"": 1}","{""id"": 1, ""text"": ""Test Question"", ""type"": ""MCQ"", ""points"": 10}",-
+QBM,QuestionServiceImplTest.java,UT_QBM_04_001,testCreateQuestion,Verify that createQuestion successfully creates a new question with valid input data,Passed,"{""text"": ""New Question"", ""type"": ""MCQ"", ""points"": 10, ""choices"": [{""text"": ""Choice 1"", ""isCorrect"": true}, {""text"": ""Choice 2"", ""isCorrect"": false}]}","{""id"": 1, ""text"": ""New Question"", ""type"": ""MCQ"", ""points"": 10, ""choices"": [{""id"": 1, ""text"": ""Choice 1"", ""isCorrect"": true}, {""id"": 2, ""text"": ""Choice 2"", ""isCorrect"": false}]}",-
+SM,StatisticsServiceTest.java,UT_SM_01,testCountExamTotal,Verify that countExamTotal returns the correct total number of exams,Passed,"{""exams"": [{""id"": 1}, {""id"": 2}, {""id"": 3}]}","{""total"": 3}",-
+SM,StatisticsServiceTest.java,UT_SM_05,testGetChangeExamUser,Verify that getChangeExamUser calculates the correct percentage change in exam users between weeks,Failed,"{""currentWeekCount"": 5, ""lastWeekCount"": 3}","{""change"": 66.67, ""percentage"": ""66.67%""}",Incorrect percentage calculation (Actual: 67.0%)
+SM,StatisticsServiceTest.java,UT_SM_06,testCountExamUserLastedSevenDaysTotal,Verify that countExamUserLastedSevenDaysTotal returns the correct array of daily exam user counts,Failed,"{""usersPerDay"": [2,3,1,4,2,3,1]}","{""dailyCounts"": [2,3,1,4,2,3,1]}",Array size mismatch (Actual: [2,3,1,4,2,3,1,0,0,0,0,0,0,0])
+SM,StatisticsServiceTest.java,UT_SM_07,testGetChangeQuestion,Failed,currentWeekCount = 4, lastWeekCount = 2,100%,Incorrect percentage calculation (Actual: 600%)
+SM,StatisticsServiceTest.java,UT_SM_08,testGetChangeAccount,Failed,currentWeekCount = 6, lastWeekCount = 3,100%,Incorrect percentage calculation (Actual: 900%)
+SM,StatisticsServiceTest.java,UT_SM_09,testGetChangeExam,Failed,currentWeekCount = 3, lastWeekCount = 1,200%,Incorrect percentage calculation (Actual: 400%)
+SM,StatisticsServiceTest.java,UT_SM_10,testGetChangeExamUserBothZero,Passed,no exam users,0%,-
+SM,StatisticsServiceTest.java,UT_SM_11,testGetChangeExamUserOnlyLastWeek,Passed,1 exam user in last week,-100%,-
+SM,StatisticsServiceTest.java,UT_SM_12,testGetChangeExamUserOnlyCurrentWeek,Passed,1 exam user in current week,100%,-
+SM,StatisticsServiceTest.java,UT_SM_13,testGetChangeQuestionBothZero,Passed,no questions,0%,-
+SM,StatisticsServiceTest.java,UT_SM_14,testGetChangeAccountBothZero,Passed,no users,0%,-
+SM,StatisticsServiceTest.java,UT_SM_15,testGetChangeExamBothZero,Passed,no exams,0%,-
+SM,StatisticsServiceTest.java,UT_SM_16,testCountExamUserLastedSevenDaysTotalEmpty,Passed,no exam users,empty list or all zeros,-
+SM,StatisticsServiceTest.java,UT_SM_17,testIsSameDayNull,Passed,null date,IllegalArgumentException,-
+SM,StatisticsServiceTest.java,UT_SM_18,testIsSameWeekNull,Passed,null date,IllegalArgumentException,-
+SM,StatisticsServiceTest.java,UT_SM_19,testIsLastWeekNull,Passed,null date,IllegalArgumentException,-
+SM,ChartControllerTest.java,UT_CC_01,testGetExamCompletionChart,Passed,exam data,chart data,-
+SM,ChartControllerTest.java,UT_CC_02,testGetExamCompletionChart_NoData,Passed,no data,empty chart,-
+SM,ChartControllerTest.java,UT_CC_03,testGetExamCompletionChart_CurrentWeekOnly,Passed,current week data,current week chart,-
+SM,ChartControllerTest.java,UT_CC_04,testGetExamCompletionChart_LastWeekOnly,Passed,last week data,last week chart,-
+SM,ChartControllerTest.java,UT_CC_05,testGetExamCompletionChart_BothWeeks,Passed,both weeks data,combined chart,-
+SM,ChartControllerTest.java,UT_CC_06,testGetExamCompletionChart_ZeroValues,Passed,zero values,zero chart,-
+SM,ChartControllerTest.java,UT_CC_07,testGetExamCompletionChart_NullValues,Passed,null values,null chart,-
+SM,ChartControllerTest.java,UT_CC_08,testGetExamCompletionChart_InvalidData,Passed,invalid data,error,-
+SM,ChartControllerTest.java,UT_CC_09,testGetExamCompletionChart_EmptyData,Passed,empty data,empty chart,-
+SM,ChartControllerTest.java,UT_CC_10,testGetExamCompletionChart_MaxValues,Passed,max values,max chart,-
+SM,ChartControllerTest.java,UT_CC_11,testGetExamCompletionChart_MinValues,Passed,min values,min chart,-
+SM,ChartControllerTest.java,UT_CC_12,testGetExamCompletionChart_BoundaryValues,Passed,boundary values,boundary chart,-
+SM,ChartControllerTest.java,UT_CC_13,testGetExamCompletionChart_EdgeCases,Passed,edge cases,edge chart,-
+SM,ChartControllerTest.java,UT_CC_14,testGetExamCompletionChart_StressTest,Passed,stress data,stress chart,-
+SM,ChartControllerTest.java,UT_CC_15,testGetExamCompletionChart_ConcurrentAccess,Passed,concurrent data,concurrent chart,-
+SM,ChartControllerTest.java,UT_CC_16,testGetExamCompletionChart_ErrorHandling,Passed,error data,error chart,-
+SM,StatisticsControllerTest.java,UT_SC_01,testGetStatistics,Passed,no data,empty statistics,- 

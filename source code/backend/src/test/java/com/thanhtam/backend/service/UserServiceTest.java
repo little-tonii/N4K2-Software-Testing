@@ -1,8 +1,13 @@
 package com.thanhtam.backend.service;
 
+import com.thanhtam.backend.config.JwtUtils;
+import com.thanhtam.backend.dto.UserExport;
+import com.thanhtam.backend.entity.PasswordResetToken;
 import com.thanhtam.backend.entity.Profile;
 import com.thanhtam.backend.entity.Role;
 import com.thanhtam.backend.entity.User;
+import com.thanhtam.backend.repository.PasswordResetTokenRepository;
+import com.thanhtam.backend.repository.ProfileRepository;
 import com.thanhtam.backend.repository.RoleRepository;
 import com.thanhtam.backend.repository.UserRepository;
 import com.thanhtam.backend.ultilities.ERole;
@@ -10,14 +15,18 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import javax.mail.MessagingException;
 import java.util.HashSet;
@@ -33,6 +42,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 public class UserServiceTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceTest.class);
+
     @Autowired
     private UserService userService;
 
@@ -43,6 +54,15 @@ public class UserServiceTest {
     private RoleRepository roleRepository;
 
     @Autowired
+    private ProfileRepository profileRepository;
+
+    @Autowired
+    private PasswordResetTokenRepository passwordResetTokenRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     private PlatformTransactionManager transactionManager;
 
     private TransactionTemplate transactionTemplate;
@@ -50,26 +70,57 @@ public class UserServiceTest {
     @BeforeEach
     void setUp() {
         transactionTemplate = new TransactionTemplate(transactionManager);
+        // Clean up any existing test data before each test
+        cleanupTestData();
     }
 
     @AfterEach
     void tearDown() {
         // Clean up test data after each test
-        transactionTemplate.execute(status -> {
-            // Find and delete all test users
-            List<User> testUsers = userRepository.findAll().stream()
-                .filter(user -> user.getUsername().startsWith("testUser_") ||
-                              user.getUsername().startsWith("activeUser_") ||
-                              user.getUsername().startsWith("deletedUser_") ||
-                              user.getUsername().startsWith("searchUser_"))
-                .collect(Collectors.toList());
-            userRepository.deleteAll(testUsers);
-            return null;
-        });
+        cleanupTestData();
+    }
+
+    private void cleanupTestData() {
+        try {
+            transactionTemplate.execute(status -> {
+                try {
+                    // Find all test users
+                    List<User> testUsers = userRepository.findAll().stream()
+                        .filter(user -> user.getUsername() != null && (
+                            user.getUsername().startsWith("testUser_") ||
+                            user.getUsername().startsWith("activeUser_") ||
+                            user.getUsername().startsWith("deletedUser_") ||
+                            user.getUsername().startsWith("searchUser_")))
+                        .collect(Collectors.toList());
+
+                    // Delete all test users in a single transaction
+                    for (User user : testUsers) {
+                        try {
+                            // First delete the user
+                            userRepository.delete(user);
+                            logger.info("Successfully deleted test user: {}", user.getUsername());
+                            
+                            // Then delete the associated profile if it exists
+                            if (user.getProfile() != null) {
+                                profileRepository.deleteById(user.getProfile().getId());
+                                logger.info("Successfully deleted profile for user: {}", user.getUsername());
+                            }
+                        } catch (Exception e) {
+                            logger.error("Error deleting user {}: {}", user.getUsername(), e.getMessage());
+                        }
+                    }
+                } catch (Exception e) {
+                    logger.error("Error during test data cleanup: {}", e.getMessage());
+                }
+                return null;
+            });
+        } catch (Exception e) {
+            logger.error("Transaction error during test data cleanup: {}", e.getMessage());
+        }
     }
 
     /**
-     * Test Case ID: UT_AM_01
+     * Test Case ID: UT_AM_18
      * Purpose: Test user creation with valid data
      * 
      * Prerequisites:
@@ -150,7 +201,7 @@ public class UserServiceTest {
     }
 
     /**
-     * Test Case ID: UT_AM_02
+     * Test Case ID: UT_AM_19
      * Purpose: Test user retrieval by username
      * 
      * Prerequisites:
@@ -188,7 +239,7 @@ public class UserServiceTest {
     }
 
     /**
-     * Test Case ID: UT_AM_03
+     * Test Case ID: UT_AM_20
      * Purpose: Test user existence check by username
      * 
      * Prerequisites:
@@ -220,7 +271,7 @@ public class UserServiceTest {
     }
 
     /**
-     * Test Case ID: UT_AM_04
+     * Test Case ID: UT_AM_21
      * Purpose: Test user existence check by email
      * 
      * Prerequisites:
@@ -254,7 +305,7 @@ public class UserServiceTest {
     }
 
     /**
-     * Test Case ID: UT_AM_05
+     * Test Case ID: UT_AM_22
      * Purpose: Test user pagination
      * 
      * Prerequisites:
@@ -278,6 +329,7 @@ public class UserServiceTest {
                 User testUser = createTestUser(uniqueUsername);
                 testUser.setEmail(uniqueUsername + "@example.com");
                 userService.createUser(testUser);
+                logger.info("Created test user with username: {}", uniqueUsername);
             }
 
             // Test pagination
@@ -293,7 +345,7 @@ public class UserServiceTest {
     }
 
     /**
-     * Test Case ID: UT_AM_06
+     * Test Case ID: UT_AM_23
      * Purpose: Test user update
      * 
      * Prerequisites:
@@ -334,7 +386,7 @@ public class UserServiceTest {
     }
 
     /**
-     * Test Case ID: UT_AM_07
+     * Test Case ID: UT_AM_24
      * Purpose: Test finding users by deleted status
      * 
      * Prerequisites:
@@ -386,7 +438,7 @@ public class UserServiceTest {
     }
 
     /**
-     * Test Case ID: UT_AM_08
+     * Test Case ID: UT_AM_25
      * Purpose: Test finding users by username search
      * 
      * Prerequisites:
@@ -421,6 +473,288 @@ public class UserServiceTest {
             assertEquals(3, searchResults.getTotalElements());
             assertTrue(searchResults.getContent().stream()
                     .allMatch(user -> user.getUsername().startsWith(searchPrefix)));
+
+            return null;
+        });
+    }
+
+    /**
+     * Test Case ID: UT_AM_26
+     * Purpose: Test finding user by ID
+     * 
+     * Prerequisites:
+     * - Database is accessible
+     * - Test user exists in database
+     * 
+     * Test Steps:
+     * 1. Create a test user
+     * 2. Find user by ID
+     * 
+     * Expected Results:
+     * - User is found successfully
+     * - Retrieved user data matches created user
+     */
+    @Test
+    @DisplayName("Test find user by ID")
+    void testFindUserById() {
+        transactionTemplate.execute(status -> {
+            // Create test user
+            String uniqueUsername = "testUser_" + UUID.randomUUID().toString().substring(0, 8);
+            User testUser = createTestUser(uniqueUsername);
+            User savedUser = userService.createUser(testUser);
+
+            // Find user by ID
+            Optional<User> foundUser = userService.findUserById(savedUser.getId());
+
+            // Verify user was found
+            assertTrue(foundUser.isPresent());
+            assertEquals(savedUser.getId(), foundUser.get().getId());
+            assertEquals(savedUser.getUsername(), foundUser.get().getUsername());
+            assertEquals(savedUser.getEmail(), foundUser.get().getEmail());
+
+            // Test with non-existent ID
+            Optional<User> notFoundUser = userService.findUserById(99999L);
+            assertFalse(notFoundUser.isPresent());
+
+            return null;
+        });
+    }
+
+    /**
+     * Test Case ID: UT_AM_27
+     * Purpose: Test finding users by intake ID
+     * 
+     * Prerequisites:
+     * - Database is accessible
+     * - Test user exists in database
+     * 
+     * Test Steps:
+     * 1. Create a test user
+     * 2. Find users by intake ID
+     * 
+     * Expected Results:
+     * - Users are found successfully
+     */
+    @Test
+    @DisplayName("Test find users by intake ID")
+    void testFindAllByIntakeId() {
+        transactionTemplate.execute(status -> {
+            // Create test user
+            String uniqueUsername = "testUser_" + UUID.randomUUID().toString().substring(0, 8);
+            User testUser = createTestUser(uniqueUsername);
+            userService.createUser(testUser);
+
+            // Find users by intake ID
+            List<User> users = userService.findAllByIntakeId(1L);
+            assertNotNull(users);
+
+            return null;
+        });
+    }
+
+    /**
+     * Test Case ID: UT_AM_28
+     * Purpose: Test finding users by username or email contains
+     * 
+     * Prerequisites:
+     * - Database is accessible
+     * - Test users exist in database
+     * 
+     * Test Steps:
+     * 1. Create test users
+     * 2. Search users by username or email
+     * 
+     * Expected Results:
+     * - Users are found successfully based on search criteria
+     */
+    @Test
+    @DisplayName("Test find users by username or email contains")
+    void testFindAllByUsernameContainsOrEmailContains() {
+        transactionTemplate.execute(status -> {
+            // Create test users
+            String searchPrefix = "searchUser_" + UUID.randomUUID().toString().substring(0, 8);
+            for (int i = 0; i < 3; i++) {
+                String uniqueUsername = searchPrefix + "_" + i;
+                User testUser = createTestUser(uniqueUsername);
+                testUser.setEmail(uniqueUsername + "@example.com");
+                userService.createUser(testUser);
+            }
+
+            // Test searching users
+            Pageable pageable = PageRequest.of(0, 10);
+            Page<User> searchResults = userService.findAllByUsernameContainsOrEmailContains(searchPrefix, searchPrefix, pageable);
+
+            assertNotNull(searchResults);
+            assertTrue(searchResults.getTotalElements() >= 3);
+            assertTrue(searchResults.getContent().stream()
+                    .allMatch(user -> user.getUsername().contains(searchPrefix) || user.getEmail().contains(searchPrefix)));
+
+            return null;
+        });
+    }
+
+    /**
+     * Test Case ID: UT_AM_29
+     * Purpose: Test finding users for export
+     * 
+     * Prerequisites:
+     * - Database is accessible
+     * - Test users exist in database
+     * 
+     * Test Steps:
+     * 1. Create test users
+     * 2. Export users by deleted status
+     * 
+     * Expected Results:
+     * - Users are exported successfully
+     */
+    @Test
+    @DisplayName("Test find users for export")
+    void testFindAllByDeletedToExport() {
+        transactionTemplate.execute(status -> {
+            // Create test users
+            String exportPrefix = "exportUser_" + UUID.randomUUID().toString().substring(0, 8);
+            for (int i = 0; i < 3; i++) {
+                String uniqueUsername = exportPrefix + "_" + i;
+                User testUser = createTestUser(uniqueUsername);
+                testUser.setEmail(uniqueUsername + "@example.com");
+                userService.createUser(testUser);
+            }
+
+            // Test exporting users
+            List<UserExport> exportResults = userService.findAllByDeletedToExport(false);
+
+            assertNotNull(exportResults);
+            assertTrue(exportResults.size() >= 3);
+            assertTrue(exportResults.stream()
+                    .allMatch(user -> user.getUsername().startsWith(exportPrefix)));
+
+            return null;
+        });
+    }
+
+    /**
+     * Test Case ID: UT_AM_30
+     * Purpose: Test get current username
+     * 
+     * Prerequisites:
+     * - Security context is available
+     * 
+     * Test Steps:
+     * 1. Set up security context
+     * 2. Get current username
+     * 
+     * Expected Results:
+     * - Current username is retrieved successfully
+     */
+    @Test
+    @DisplayName("Test get current username")
+    @WithMockUser(username = "testuser")
+    void testGetUserName() {
+        String username = userService.getUserName();
+        assertEquals("testuser", username);
+    }
+
+    /**
+     * Test Case ID: UT_AM_31
+     * Purpose: Test password reset request
+     * 
+     * Prerequisites:
+     * - Database is accessible
+     * - Test user exists in database
+     * 
+     * Test Steps:
+     * 1. Create a test user
+     * 2. Request password reset
+     * 
+     * Expected Results:
+     * - Password reset request is processed successfully
+     */
+    @Test
+    @DisplayName("Test password reset request")
+    void testRequestPasswordReset() {
+        // Create test user
+        String uniqueUsername = "testUser_" + UUID.randomUUID().toString().substring(0, 8);
+        User testUser = createTestUser(uniqueUsername);
+        testUser.setEmail(uniqueUsername + "@example.com");
+        
+        transactionTemplate.execute(status -> {
+            userService.createUser(testUser);
+            return null;
+        });
+
+        // Skip email service test if not configured
+        if (System.getProperty("spring.mail.username") == null) {
+            logger.warn("Skipping email service test - email configuration not found");
+            return;
+        }
+
+        try {
+            // Test password reset request
+            boolean result = userService.requestPasswordReset(testUser.getEmail());
+            assertTrue(result);
+
+            // Test with non-existent email
+            boolean nonExistentResult = userService.requestPasswordReset("nonexistent@example.com");
+            assertFalse(nonExistentResult);
+        } catch (MessagingException e) {
+            fail("Email service failed: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Test Case ID: UT_AM_32
+     * Purpose: Test password reset
+     * 
+     * Prerequisites:
+     * - Database is accessible
+     * - Test user exists in database
+     * - Password reset token exists
+     * 
+     * Test Steps:
+     * 1. Create a test user
+     * 2. Create password reset token
+     * 3. Reset password
+     * 
+     * Expected Results:
+     * - Password is reset successfully
+     */
+    @Test
+    @DisplayName("Test password reset")
+    void testResetPassword() {
+        transactionTemplate.execute(status -> {
+            // Create test user
+            String uniqueUsername = "testUser_" + UUID.randomUUID().toString().substring(0, 8);
+            User testUser = createTestUser(uniqueUsername);
+            testUser.setEmail(uniqueUsername + "@example.com");
+            User savedUser = userService.createUser(testUser);
+
+            // Create password reset token using JwtUtils
+            JwtUtils jwtUtils = new JwtUtils();
+            String token = jwtUtils.generatePasswordResetToken(savedUser.getId());
+            
+            // Verify token is valid before using it
+            assertFalse(jwtUtils.hasTokenExpired(token));
+
+            // Create and save password reset token
+            PasswordResetToken passwordResetToken = new PasswordResetToken();
+            passwordResetToken.setToken(token);
+            passwordResetToken.setUser(savedUser);
+            passwordResetTokenRepository.save(passwordResetToken);
+
+            // Test password reset
+            String newPassword = "newPassword123";
+            boolean result = userService.resetPassword(token, newPassword);
+            assertTrue(result);
+
+            // Verify password was changed
+            Optional<User> updatedUser = userService.getUserByUsername(uniqueUsername);
+            assertTrue(updatedUser.isPresent());
+            assertTrue(passwordEncoder.matches(newPassword, updatedUser.get().getPassword()));
+
+            // Test with non-existent token
+            boolean invalidResult = userService.resetPassword(jwtUtils.generatePasswordResetToken(99999L), newPassword);
+            assertFalse(invalidResult);
 
             return null;
         });

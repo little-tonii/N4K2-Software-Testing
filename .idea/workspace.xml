@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="95f4cdfe-b00e-4b3c-be09-090efb3ae0a5" name="Changes" comment="add: saved">
+      <change beforePath="$PROJECT_DIR$/.cursor/rules/unit-test.mdc" beforeDir="false" afterPath="$PROJECT_DIR$/.cursor/rules/unit-test.mdc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source code/backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source code/backend/src/main/java/com/thanhtam/backend/controller/QuestionTypeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/src/main/java/com/thanhtam/backend/controller/QuestionTypeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/controller/AuthenticationControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/controller/AuthenticationControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/controller/UserControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/controller/UserControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/ExamServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/ExamServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/ExamUserServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/ExamUserServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/ProfileServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/ProfileServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/RoleServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/RoleServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/UserDetailsServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/UserDetailsServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/UserServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/UserServiceTest.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="testing/donglx" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Zero-zx&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/little-tonii/N4K2-Software-Testing.git&quot;,
+    &quot;accountId&quot;: &quot;2d09eb57-8c92-4f29-bf80-7f8532848aaa&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2wGWLTQ8kl06M9Xk4uLqke0NISp" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "feature/fix-test-with-mysql",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Work/PTIT/SQA/tonie/N4K2-Software-Testing"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="N4K2-Software-Testing" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+        <option name="com.soywiz.korge.intellij.UpdateResourceBeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="N4K2-Software-Testing" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+        <option name="com.soywiz.korge.intellij.UpdateResourceBeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="95f4cdfe-b00e-4b3c-be09-090efb3ae0a5" name="Changes" comment="" />
+      <created>1745668335186</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1745668335186</updated>
+    </task>
+    <task id="LOCAL-00001" summary="add: saved">
+      <option name="closed" value="true" />
+      <created>1747452777505</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1747452777505</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="feature/fix-test-with-mysql" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="add: saved" />
+    <option name="LAST_COMMIT_MESSAGE" value="add: saved" />
+  </component>
+</project>

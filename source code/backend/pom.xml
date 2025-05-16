@@ -160,6 +160,11 @@
             <version>1.14.12</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -181,6 +186,41 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.11</version>
+                <configuration>
+                     <excludes>
+                        <exclude>**/FilesStorageServiceImpl.class</exclude>
+                        <exclude>**/ExcelServiceImpl.class</exclude>
+                        <exclude>**/S3ServicesImpl.class</exclude>
+                        <exclude>**/MailServiceImpl.class</exclude>
+                        <exclude>**/dto/**</exclude>
+                        <exclude>**/entity/**</exclude>
+                        <exclude>**/FileController.class</exclude>
+                        <exclude>**/ExcelController.class</exclude>
+                        <exclude>**/FileAWSController.class</exclude>
+                        <exclude>**/LoginRequest.class</exclude>
+                        <exclude>**/ErrorMessage.class</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
