@@ -23,7 +23,7 @@ class QuestionPage:
     def get_question_details(self, course, part, question_name):
         dropdown_element = self.driver.find_element(By.XPATH, "//select[contains(@class, 'appearance-none') and contains(@class, 'w-full')]")
         select = Select(dropdown_element)
-        select.select_by_visible_text("Tất cả")
+        select.select_by_visible_text("100")
 
         dropdown_element = self.driver.find_element(By.NAME, "course")
         select = Select(dropdown_element)
@@ -34,7 +34,6 @@ class QuestionPage:
         dropdown_element = self.driver.find_element(By.NAME, "part")
         select = Select(dropdown_element)
         select.select_by_visible_text(part)
-
         print(question_name)
 
         question_element = WebDriverWait(self.driver, 10).until(
@@ -91,19 +90,35 @@ class QuestionPage:
         self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
 
     def create_multiple_choice_question(self, question_text, choices, correct_index):
-        question_input = WebDriverWait(self.driver, 10).until(
-            EC.visibility_of_element_located((By.ID, "question_text"))
-        )
-        question_input.clear()
-        question_input.send_keys(question_text)
+        multiple_choice = self.driver.find_element(By.CSS_SELECTOR, "label[for='2']")
+        multiple_choice.click()
 
-        # Assume inputs for choices have IDs choice_0, choice_1, etc.
-        for i, choice_text in enumerate(choices):
-            choice_input = self.driver.find_element(By.ID, f"choice_{i}")
-            choice_input.clear()
-            choice_input.send_keys(choice_text)
+        editor_div = self.driver.find_element(By.CSS_SELECTOR, "div.ck-editor__editable[contenteditable='true']")
+        editor_div.send_keys(Keys.CONTROL + "a")
+        editor_div.send_keys(Keys.BACKSPACE)
+        editor_div.send_keys(question_text)
+        
+        add_answer_btn = self.driver.find_element(By.XPATH, "//button[contains(text(),'Thêm đáp án')]")
+        for i in range(len(choices) - 2):        
+            add_answer_btn.click()
 
-        # Select correct answer radio button by index
-        self.driver.find_element(By.ID, f"correct_choice_{correct_index}").click()
+        sleep(1)
 
-        self.driver.find_element(By.XPATH, "//button[contains(text(),'Submit')]").click()
+        choice_divs = self.driver.find_elements(By.CSS_SELECTOR, "div.ck-editor__editable")
+        i = 0
+        for choice_div in choice_divs:
+            div_text = choice_div.text.strip()
+
+                # Check if question_text is in div_text
+            if question_text in div_text:
+                continue
+
+            choice_div.send_keys(Keys.CONTROL + "a")
+            choice_div.send_keys(Keys.BACKSPACE)
+            choice_div.send_keys(choices[i])
+            i += 1
+        
+        set_answer = self.driver.find_element(By.CSS_SELECTOR, f"label[for='mc-{correct_index}']")
+        set_answer.click()
+        
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()        
