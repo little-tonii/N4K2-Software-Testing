@@ -10,7 +10,8 @@ Error Rate,7.19%,,,,,,,
 # Module-wise Statistics,,,,,,,,
 Module,Total Tests,Passed,Failed,Errors,Pass Rate,,,,,
 AM,13,13,0,0,100.00%,,,,,
-CM,20,20,0,0,100.00%,,,,,
+CM,20,20,0,0,100.00%,,,,89-63
+.
 EM,27,17,10,0,62.96%,,,,,
 QBM,57,57,0,0,100.00%,,,,,
 SM,36,31,5,0,86.11%,,,,,

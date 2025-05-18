@@ -5,19 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="95f4cdfe-b00e-4b3c-be09-090efb3ae0a5" name="Changes" comment="add: saved">
-      <change beforePath="$PROJECT_DIR$/.cursor/rules/unit-test.mdc" beforeDir="false" afterPath="$PROJECT_DIR$/.cursor/rules/unit-test.mdc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source code/backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source code/backend/src/main/java/com/thanhtam/backend/controller/QuestionTypeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/src/main/java/com/thanhtam/backend/controller/QuestionTypeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/controller/AuthenticationControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/controller/AuthenticationControllerTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/controller/UserControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/controller/UserControllerTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/ExamServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/ExamServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/ExamUserServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/ExamUserServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/ProfileServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/ProfileServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/RoleServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/RoleServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/UserDetailsServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/UserDetailsServiceImplTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/UserServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/UserServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/StatisticsServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/source code/backend/src/test/java/com/thanhtam/backend/service/StatisticsServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-results-summary.csv" beforeDir="false" afterPath="$PROJECT_DIR$/test-results-summary.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +28,15 @@
     &quot;assignee&quot;: &quot;Zero-zx&quot;
   }
 }</component>
+  <component name="GitRewordedCommitMessages">
+    <option name="commitMessagesMapping">
+      <RewordedCommitMessageMapping>
+        <option name="originalMessage" value="fix: database not connected" />
+        <option name="rewordedMessage" value="add: unit test" />
+      </RewordedCommitMessageMapping>
+    </option>
+    <option name="onto" value="2726ca27fe194163bfb2c8d0673f145227fea22f" />
+  </component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/little-tonii/N4K2-Software-Testing.git&quot;,
@@ -52,14 +51,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "feature/fix-test-with-mysql",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Work/PTIT/SQA/tonie/N4K2-Software-Testing"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/fix-test-with-mysql&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Work/PTIT/SQA/tonie/N4K2-Software-Testing&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
       <module name="N4K2-Software-Testing" />
@@ -94,7 +93,23 @@
       <option name="project" value="LOCAL" />
       <updated>1747452777505</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="add: saved">
+      <option name="closed" value="true" />
+      <created>1747535050949</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1747535050950</updated>
+    </task>
+    <task id="LOCAL-00003" summary="add: saved">
+      <option name="closed" value="true" />
+      <created>1747538781781</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1747538781781</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -121,6 +136,8 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <MESSAGE value="add: unit test full" />
+    <MESSAGE value="add: unit test" />
     <MESSAGE value="add: saved" />
     <option name="LAST_COMMIT_MESSAGE" value="add: saved" />
   </component>

@@ -84,43 +84,76 @@ public class UserServiceTest {
         try {
             transactionTemplate.execute(status -> {
                 try {
-                    // Find all test users
+                    // 1. Identify all test users based on username prefixes
                     List<User> testUsers = userRepository.findAll().stream()
                         .filter(user -> user.getUsername() != null && (
-                            user.getUsername().startsWith("testUser_") ||
-                            user.getUsername().startsWith("activeUser_") ||
-                            user.getUsername().startsWith("deletedUser_") ||
-                            user.getUsername().startsWith("searchUser_")))
+                            user.getUsername().startsWith("testUser") ||
+                            user.getUsername().startsWith("activeUser") ||
+                            user.getUsername().startsWith("deletedUser") ||
+                            user.getUsername().startsWith("searchUser") || // Existing prefixes
+                            user.getUsername().startsWith("exportUser")))  // Added prefix
                         .collect(Collectors.toList());
 
-                    // Delete all test users in a single transaction
+                    if (testUsers.isEmpty()) {
+                        logger.info("No test users found for cleanup based on prefixes.");
+                        return null;
+                    }
+                    logger.info("Found {} test users for cleanup: {}", testUsers.size(), testUsers.stream().map(User::getUsername).collect(Collectors.toList()));
+
+                    List<Long> testUserIds = testUsers.stream().map(User::getId).collect(Collectors.toList());
+                    Set<Long> profileIdsToDelete = new HashSet<>();
                     for (User user : testUsers) {
-                        try {
-                            // First delete the user
-                            userRepository.delete(user);
-                            logger.info("Successfully deleted test user: {}", user.getUsername());
-                            
-                            // Then delete the associated profile if it exists
-                            if (user.getProfile() != null) {
-                                profileRepository.deleteById(user.getProfile().getId());
-                                logger.info("Successfully deleted profile for user: {}", user.getUsername());
-                            }
-                        } catch (Exception e) {
-                            logger.error("Error deleting user {}: {}", user.getUsername(), e.getMessage());
+                        if (user.getProfile() != null) {
+                            profileIdsToDelete.add(user.getProfile().getId());
                         }
                     }
+
+                    // 3. Delete PasswordResetTokens associated with these test users
+                    List<PasswordResetToken> allTokens = passwordResetTokenRepository.findAll();
+                    List<PasswordResetToken> tokensAssociatedWithTestUsers = allTokens.stream()
+                        .filter(token -> token.getUser() != null && testUserIds.contains(token.getUser().getId()))
+                        .collect(Collectors.toList());
+
+                    if (!tokensAssociatedWithTestUsers.isEmpty()) {
+                        passwordResetTokenRepository.deleteAll(tokensAssociatedWithTestUsers); // Batch delete tokens
+                        logger.info("Successfully deleted {} password reset tokens for test users.", tokensAssociatedWithTestUsers.size());
+                    } else {
+                        logger.info("No password reset tokens found associated with the identified test users.");
+                    }
+                    
+                    // 4. Delete the test users
+                    userRepository.deleteAll(testUsers); // Batch delete users
+                    logger.info("Successfully deleted {} test users.", testUsers.size());
+
+                    // 5. Delete the associated profiles (if not cascaded)
+                    if (!profileIdsToDelete.isEmpty()) {
+                        // profileRepository.deleteAllById(profileIdsToDelete); // Prefer this if available
+                        for (Long profileId : profileIdsToDelete) { // Fallback to individual deletion if needed
+                            try {
+                                profileRepository.deleteById(profileId);
+                                logger.info("Successfully deleted profile with ID: {}", profileId);
+                            } catch (Exception e) {
+                                logger.error("Error deleting profile with ID {}: {}", profileId, e.getMessage(), e);
+                            }
+                        }
+                        logger.info("Attempted to delete {} profiles.", profileIdsToDelete.size());
+                    } else {
+                        logger.info("No profiles found to delete for the identified test users.");
+                    }
+
                 } catch (Exception e) {
-                    logger.error("Error during test data cleanup: {}", e.getMessage());
+                    logger.error("Error during test data cleanup execution: {}", e.getMessage(), e);
+                    if (status != null) status.setRollbackOnly(); // Mark transaction for rollback on any error
                 }
                 return null;
             });
         } catch (Exception e) {
-            logger.error("Transaction error during test data cleanup: {}", e.getMessage());
+            logger.error("Transaction error during test data cleanup: {}", e.getMessage(), e);
         }
     }
 
     /**
-     * Test Case ID: UT_AM_18
+     * Test Case ID: UT_AM_01
      * Purpose: Test user creation with valid data
      * 
      * Prerequisites:
@@ -131,6 +164,13 @@ public class UserServiceTest {
      * 1. Create a new user with valid data
      * 2. Save the user using userService
      * 3. Verify the user was saved correctly
+     * 
+     * Input:
+     * - Username: "testUser_01"
+     * - Email: "testUser_01@example.com"
+     * - Password: "password123"
+     * - Profile: "Test User"
+     * - Role: "ROLE_STUDENT"
      * 
      * Expected Results:
      * - User is created successfully
@@ -201,7 +241,135 @@ public class UserServiceTest {
     }
 
     /**
-     * Test Case ID: UT_AM_19
+     * Test Case ID: UT_AM_02
+     * Purpose: Test user creation with an invalid email format
+     *
+     * Prerequisites:
+     * - Database is accessible
+     * - ROLE_STUDENT exists in database
+     *
+     * Test Steps:
+     * 1. Attempt to create a new user with an invalid email format
+     * 2. Verify that user creation fails
+     *
+     * Input:
+     * - Username: "testUser_invalidEmail_02"
+     * - Email: "invalid-email-format"
+     * - Password: "password123"
+     * - Profile: "Test User"
+     * - Role: "ROLE_STUDENT"
+     *
+     * Expected Results:
+     * - User creation throws an IllegalArgumentException or a suitable validation exception
+     */
+    @Test
+    @DisplayName("Test create user with invalid email format")
+    void testCreateUserWithInvalidEmailFormat() {
+        // Prepare data that doesn't necessarily need its own transaction here
+        Profile profile = new Profile();
+        profile.setFirstName("Test");
+        profile.setLastName("InvalidEmail");
+
+        String uniqueUsername = "testUser_invalidEmail_" + UUID.randomUUID().toString().substring(0, 8);
+        User user = new User();
+        user.setUsername(uniqueUsername);
+        user.setEmail("invalid-email-format"); // Invalid email
+        user.setPassword("password123");
+        user.setProfile(profile); // Profile is transient until User is saved with it
+
+        // Assert that the transactional operation throws an exception
+        Exception thrownException = assertThrows(Exception.class, () -> {
+            transactionTemplate.execute(status -> {
+                // Ensure ROLE_STUDENT exists (this needs to be part of the same transaction)
+                Role studentRole = roleRepository.findByName(ERole.ROLE_STUDENT)
+                        .orElseGet(() -> {
+                            Role newRole = new Role(null, ERole.ROLE_STUDENT);
+                            return roleRepository.save(newRole);
+                        });
+
+                Set<Role> roles = new HashSet<>();
+                roles.add(studentRole);
+                user.setRoles(roles);
+
+                userService.createUser(user); // This call is expected to throw
+                // If createUser does not throw, assertThrows will fail, which is correct.
+                // If createUser throws, the exception propagates from this lambda,
+                // TransactionTemplate handles rollback, and assertThrows catches it.
+                return null; // For TransactionCallback signature
+            });
+        });
+
+        logger.info("Caught expected exception for invalid email: {}", thrownException.getMessage());
+        // Verify that the user was NOT actually saved.
+        assertFalse(userRepository.findByUsername(uniqueUsername).isPresent(),
+                "User with invalid email should not be saved.");
+    }
+
+    /**
+     * Test Case ID: UT_AM_03
+     * Purpose: Test user creation with a password that is too short
+     *
+     * Prerequisites:
+     * - Database is accessible
+     * - ROLE_STUDENT exists in database
+     * - Password validation rules (e.g., minimum length of 8 characters) are in place
+     *
+     * Test Steps:
+     * 1. Attempt to create a new user with a password that is too short (e.g., "12345")
+     * 2. Verify that user creation fails
+     *
+     * Input:
+     * - Username: "testUser_shortPass_03"
+     * - Email: "testUser_shortPass_03@example.com"
+     * - Password: "1234567"
+     * - Profile: "Test User"
+     * - Role: "ROLE_STUDENT"
+     *
+     * Expected Results:
+     * - User creation throws an IllegalArgumentException or a suitable validation exception
+     */
+    @Test
+    @DisplayName("Test create user with password too short")
+    void testCreateUserWithPasswordTooShort() {
+        // Prepare data
+        Profile profile = new Profile();
+        profile.setFirstName("Test");
+        profile.setLastName("ShortPass");
+
+        String uniqueUsername = "testUser_shortPass_" + UUID.randomUUID().toString().substring(0, 8);
+        User user = new User();
+        user.setUsername(uniqueUsername);
+        user.setEmail(uniqueUsername + "@example.com");
+        user.setPassword("1234567"); // Password is too short
+        user.setProfile(profile);
+
+        // Assert that the transactional operation throws an exception
+        Exception thrownException = assertThrows(Exception.class, () -> {
+            transactionTemplate.execute(status -> {
+                // Ensure ROLE_STUDENT exists
+                Role studentRole = roleRepository.findByName(ERole.ROLE_STUDENT)
+                        .orElseGet(() -> {
+                            Role newRole = new Role(null, ERole.ROLE_STUDENT);
+                            return roleRepository.save(newRole);
+                        });
+
+                Set<Role> roles = new HashSet<>();
+                roles.add(studentRole);
+                user.setRoles(roles);
+
+                userService.createUser(user); // Expected to throw
+                return null; // For TransactionCallback signature
+            });
+        });
+
+        logger.info("Caught expected exception for short password: {}", thrownException.getMessage());
+        // Verify that the user was NOT actually saved.
+        assertFalse(userRepository.findByUsername(uniqueUsername).isPresent(),
+                "User with too short password should not be saved.");
+    }
+
+    /**
+     * Test Case ID: UT_AM_04
      * Purpose: Test user retrieval by username
      * 
      * Prerequisites:
@@ -212,6 +380,8 @@ public class UserServiceTest {
      * 1. Create a test user
      * 2. Retrieve user by username
      * 
+     * Input:
+     * - User with username: "testUser_04"
      * Expected Results:
      * - User is retrieved successfully
      * - Retrieved user data matches created user
@@ -239,7 +409,7 @@ public class UserServiceTest {
     }
 
     /**
-     * Test Case ID: UT_AM_20
+     * Test Case ID: UT_AM_05
      * Purpose: Test user existence check by username
      * 
      * Prerequisites:
@@ -250,8 +420,10 @@ public class UserServiceTest {
      * 1. Create a test user
      * 2. Check if user exists by username
      * 
+     * Input:
+     * - User with username: "testUser_05"
      * Expected Results:
-     * - User existence check returns correct result
+     * - Return true
      */
     @Test
     @DisplayName("Test check user existence by username")
@@ -271,7 +443,7 @@ public class UserServiceTest {
     }
 
     /**
-     * Test Case ID: UT_AM_21
+     * Test Case ID: UT_AM_06
      * Purpose: Test user existence check by email
      * 
      * Prerequisites:
@@ -282,8 +454,10 @@ public class UserServiceTest {
      * 1. Create a test user
      * 2. Check if user exists by email
      * 
+     * Input:
+     * - User with email: "testUser_06@example.com"
      * Expected Results:
-     * - User existence check returns correct result
+     * - Return true
      */
     @Test
     @DisplayName("Test check user existence by email")
@@ -305,8 +479,10 @@ public class UserServiceTest {
     }
 
     /**
-     * Test Case ID: UT_AM_22
+     * Test Case ID: UT_AM_07
      * Purpose: Test user pagination
+     * 
+     * Method function: findUsersByPage
      * 
      * Prerequisites:
      * - Database is accessible
@@ -315,6 +491,10 @@ public class UserServiceTest {
      * Test Steps:
      * 1. Create multiple test users
      * 2. Retrieve users with pagination
+     * 
+     * Input:
+     * - Page number: 0
+     * - Page size: 2
      * 
      * Expected Results:
      * - Users are retrieved with correct pagination
@@ -345,7 +525,7 @@ public class UserServiceTest {
     }
 
     /**
-     * Test Case ID: UT_AM_23
+     * Test Case ID: UT_AM_08
      * Purpose: Test user update
      * 
      * Prerequisites:
@@ -356,6 +536,11 @@ public class UserServiceTest {
      * 1. Create a test user
      * 2. Update user information
      * 3. Verify update was successful
+     * 
+     * Input:
+     * - User with username: "testUser_08"
+     * - New first name: "Updated"
+     * - New last name: "Name"
      * 
      * Expected Results:
      * - User is updated successfully
@@ -386,7 +571,7 @@ public class UserServiceTest {
     }
 
     /**
-     * Test Case ID: UT_AM_24
+     * Test Case ID: UT_AM_09
      * Purpose: Test finding users by deleted status
      * 
      * Prerequisites:
@@ -398,6 +583,8 @@ public class UserServiceTest {
      * 2. Set some users as deleted
      * 3. Retrieve users by deleted status
      * 
+     * Input:
+     * - 
      * Expected Results:
      * - Users are retrieved correctly based on deleted status
      */
@@ -585,7 +772,7 @@ public class UserServiceTest {
             Page<User> searchResults = userService.findAllByUsernameContainsOrEmailContains(searchPrefix, searchPrefix, pageable);
 
             assertNotNull(searchResults);
-            assertTrue(searchResults.getTotalElements() >= 3);
+            assertEquals(3, searchResults.getTotalElements(), "Should find exactly the 3 users created for this test");
             assertTrue(searchResults.getContent().stream()
                     .allMatch(user -> user.getUsername().contains(searchPrefix) || user.getEmail().contains(searchPrefix)));
 

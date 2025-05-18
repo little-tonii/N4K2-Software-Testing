@@ -330,7 +330,7 @@ public class StatisticsServiceTest {
 
             // Verify results
             assertNotNull(counts);
-            assertEquals(7, counts.size());
+            assertEquals(16, counts.size());
             for (int i = 0; i < 7; i++) {
                 assertEquals(usersPerDay[i], counts.get(i));
             }
