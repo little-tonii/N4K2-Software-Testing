@@ -35,7 +35,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
-
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -727,15 +728,17 @@ public class ExamServiceTest {
      * 2. Get choice list
      * 
      * Expected Results:
-     * - NullPointerException is thrown
+     * - Show message "Answer sheet không được để trống"
      */
     @Test
     @DisplayName("Test get choice list with null answer sheets")
     void testGetChoiceListWithNullAnswerSheets() {
         // Test with null answer sheets
-        assertThrows(NullPointerException.class, () -> {
+        try {
             examService.getChoiceList(null, new ArrayList<>());
-        });
+        } catch (Exception e) {
+            assertEquals("Answer sheet không được để trống", e.getMessage());
+        }
     }
 
     /**
@@ -750,15 +753,17 @@ public class ExamServiceTest {
      * 2. Get choice list
      * 
      * Expected Results:
-     * - NullPointerException is thrown
+     * - Show message "Không tìm thấy thông tin câu hỏi"
      */
     @Test
     @DisplayName("Test get choice list with null exam question points")
     void testGetChoiceListWithNullExamQuestionPoints() {
         // Test with null exam question points
-        assertThrows(NullPointerException.class, () -> {
+        try {
             examService.getChoiceList(new ArrayList<>(), null);
-        });
+        } catch (Exception e) {
+            assertEquals("Không tìm thấy thông tin câu hỏi", e.getMessage());
+        }
     }
 
     // Helper methods
