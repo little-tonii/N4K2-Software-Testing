@@ -20,14 +20,14 @@ class CreateQuestionTests(unittest.TestCase):
     def test_create_true_false_question(self):
         course = "Professional Speaking"
         part = "Pronunciation"
-        question_name = "I'm gonna give you up?"
+        question_name = "Anh em minh cu the thoi hehehehe?"
 
         self.login_page.login("admin")
         self.login_page.wait_for_login_success()
         self.question_page.open()
         self.question_page.click_create_question()
         self.question_page.set_question_type(course, part, "Easy - 5pts")
-        self.question_page.create_true_false_question(question_name, False)
+        self.question_page.create_true_false_question(question_name, True)
 
         # Reset the page
         self.question_page.open()
@@ -103,14 +103,9 @@ class CreateQuestionTests(unittest.TestCase):
         radio_inputs = self.driver.find_elements(By.CSS_SELECTOR, "input[type='radio'][name^='mcChoices']")
 
         for radio_input in radio_inputs:
-            # Check if this radio input is selected (checked)
             if radio_input.is_selected():
-                # Find its label sibling to get the displayed text
                 label = radio_input.find_element(By.XPATH, "./following-sibling::label")
                 print(f"Selected option: {label.text}")
 
     def tearDown(self):
         self.driver.quit()
-
-if __name__ == "__main__":
-    unittest.main()

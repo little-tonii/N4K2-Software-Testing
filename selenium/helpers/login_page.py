@@ -2,6 +2,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from const import USERS
+import time
 
 class LoginPage:
     def __init__(self, driver):
@@ -16,6 +17,9 @@ class LoginPage:
 
     def login(self, username, password):
         self.open()
+
+        time.sleep(1)
+
         self.driver.find_element(By.ID, self.username_id).send_keys(username)
         self.driver.find_element(By.ID, self.password_id).send_keys(password)
         self.driver.find_element(By.XPATH, self.login_button_xpath).click()
